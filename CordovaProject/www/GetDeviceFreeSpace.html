@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *">
+    <title>CordovaProject</title>
+
+    <!-- CordovaProject 參考 -->
+    <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Cordova 參考，建置後會加入您的應用程式。 -->
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+
+    <p>
+        <input type="button" value="取得裝置的內部可用儲存空間" onclick="javascript: funShowLocalFreeSpace();" />
+        <input type="button" value="取得裝置的外部可用儲存空間" onclick="javascript: funShowExtFreeSpace();" />
+    </p>
+
+    <script language="javascript">
+        // 取得內存空間的內容
+        function funShowLocalFreeSpace()
+        {
+            funGetLocalFreeSpace
+            (
+                function (intLocalFreeSpace) { alert("內部儲存空間還有：" + funGetFreeSpaceString(intLocalFreeSpace)); }
+            );
+        }
+
+        // 取得外部儲存空間的內容
+        function funShowExtFreeSpace()
+        {
+            funGetExtendFreeSpace
+            (
+                function (intExtFreeSpace) { alert("外部儲存空間還有：" + funGetFreeSpaceString(intExtFreeSpace)); },
+                fail
+            );
+        }
+
+        function fail(error)
+        {
+            alert("取得可用空間發生錯誤，錯誤代碼:" + error.code);
+        }
+
+        // 取得本機裝置的內存空間
+        function funGetLocalFreeSpace(callback, start, end) {
+            callback = callback == null ? function () { } : callback
+            start = start == null ? 0 : start
+            end = end == null ? 1 * 1024 * 1024 * 1024 * 1024 : end //starting with 1 TB
+            limit = 1024 // precision of 1kb
+
+            start_temp = start
+            end_temp = end
+            callback_temp = callback
+            if (end - start < limit)
+                callback(start)
+            else {
+                window.requestFileSystem(LocalFileSystem.PERSISTENT, parseInt(end_temp - ((end_temp - start_temp) / 2)), function (fileSystem) {
+                    setTimeout(function () {
+                        funGetLocalFreeSpace(callback_temp, parseInt(parseInt(end_temp - ((end_temp - start_temp) / 2))), end_temp)
+                    }, 0)
+                }, function () {
+                    setTimeout(function () {
+                        funGetLocalFreeSpace(callback_temp, start_temp, parseInt(end_temp - ((end_temp - start_temp) / 2)))
+                    }, 0)
+                })
+            }
+        }
+
+        // 取得外部儲存體的空間
+        function funGetExtendFreeSpace(funSuccess, funFail)
+        {
+            cordova.exec(funSuccess, funFail, "File", "getFreeDiskSpace", []);
+        }
+
+        // 回傳空間字字串
+        function funGetFreeSpaceString(intFreeSpace)
+        {
+            var strFreeSpace;
+
+            if (intFreeSpace > 0) {
+                if (intFreeSpace > 1024)
+                    strFreeSpace = (intFreeSpace / 1024).toFixed(2) + " KB";
+
+                if (intFreeSpace > (1024 * 1024))
+                    strFreeSpace = (intFreeSpace / (1024 * 1024)).toFixed(2) + " MB";
+
+                if (intFreeSpace > (1024 * 1024 * 1024))
+                    strFreeSpace = (intFreeSpace / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+            }
+
+            return strFreeSpace;
+        }
+    </script>
+    
+</body>
+</html>
