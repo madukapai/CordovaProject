@@ -107,4 +107,9 @@
     <splash src="res/screens/wp8/SplashScreenImage.jpg" width="480" height="800" />
   </platform>
   <plugin name="cordova-plugin-media-capture" version="1.2.0" />
+  <plugin name="cordova-plugin-file" version="4.1.1" />
+  <plugin name="org.apache.cordova.plugin.cache" version="1.0.5" src="https://github.com/tiltshiftfocus/cordova-plugin-cache.git" />
+  <plugin name="com.sarriaroman.PhotoViewer" version="1.1.1" src="https://github.com/sarriaroman/photoviewer" />
+  <plugin name="com.moust.cordova.videoplayer" version="1.0.1" src="https://github.com/moust/cordova-plugin-videoplayer" />
+  <plugin name="cordova-plugin-camera" version="2.1.0" />
 </widget>

@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *">
+    <title>CordovaProject</title>
+
+    <!-- CordovaProject 參考 -->
+    <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Cordova 參考，建置後會加入您的應用程式。 -->
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+
+    <p>
+        <input type="button" value="單純呈現圖片" onclick="javascript: funShowPicture(Camera.MediaType.PICTURE);" />
+        <input type="button" value="預覽圖片" onclick="javascript: funPreviewPicture(Camera.MediaType.PICTURE);" />
+        <input type="button" value="預覽影片" onclick="javascript: funPreviewVideo(Camera.MediaType.VIDEO);" />
+        <img src="" id="imgPicture" />
+    </p>
+
+    <script language="javascript">
+        function funShowPicture(mediaType)
+        {
+            var cameraOptions = funGetCameraOption(mediaType);
+
+            navigator.camera.getPicture
+                (
+                function (imgData) { document.getElementById("imgPicture").src = imgData; },
+                function (error) { alert('開啟照片失敗：' + error); },
+                cameraOptions
+                );
+        }
+
+        function funPreviewPicture(mediaType)
+        {
+            var cameraOptions = funGetCameraOption(mediaType);
+
+            navigator.camera.getPicture
+                (
+                function(imgData) {PhotoViewer.show(imgData, "這是標頭");}, 
+                function (error){alert('開啟照片失敗：' + error);},
+                cameraOptions
+                );            
+        }
+
+        function funPreviewVideo(mediaType)
+        {
+            // TODO:在這裡放上影片的路徑
+            var strVideoPath = "";
+
+            if (strVideoPath == "")
+                alert('請更換影片的路徑字串')
+            else
+                VideoPlayer.play(strVideoPath);
+        }
+
+        function funGetCameraOption(mediaType)
+        {
+            var cameraOptions =
+                {
+                    destinationType: Camera.DestinationType.FILE_URI,
+                    sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                    mediaType: mediaType,
+                };
+
+            return cameraOptions;
+        }
+    </script>
+    
+</body>
+</html>
