@@ -8,24 +8,20 @@
         視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
         如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
     <title>CordovaProject</title>
 
     <!-- CordovaProject 參考 -->
     <link href="css/index.css" rel="stylesheet" />
 </head>
 <body>
-    <p><a href="captureVideo.html">錄影範例程式 - [captureVideo]</a></p>
-    <p><a href="GetDeviceFreeSpace.html">取得裝置可用空間 - [cordova.exec]</a></p>
-    <p><a href="ClearCache.html">清除App快取 - [window.cache.clear]</a></p>
-    <p><a href="preview.html">照片及影片的預覽 - [PhotoViewer, VideoPlayer]</a></p>
-    <p><a href="notification.html">訊息推播</a></p>
-    <p><a href="Accelerometer.html">陀螺儀</a></p>
-
+    <p>
+        <span id="spanPushMessage"></span>
+    </p>
         <!-- Cordova 參考，建置後會加入您的應用程式。 -->
         <script src="cordova.js"></script>
         <script src="scripts/platformOverrides.js"></script>
-
         <script src="scripts/index.js"></script>
+        <script src="scripts/jquery-1.12.1.js"></script>
 </body>
 </html>
