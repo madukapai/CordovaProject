@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *">
+    <title>CordovaProject</title>
+
+    <!-- CordovaProject 參考 -->
+    <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+        <!-- Cordova 參考，建置後會加入您的應用程式。 -->
+        <script src="cordova.js"></script>
+        <script src="scripts/platformOverrides.js"></script>
+
+        <script src="scripts/index.js"></script>
+
+    <button onclick="javascript: funScan();">Start Scan</button>
+
+    <script language="javascript">
+        function funScan()
+        {
+            var scanOption =
+            {
+                "preferFrontCamera": true, // iOS and Android
+                "showFlipCameraButton": true, // iOS and Android
+                "prompt": "Place a barcode inside the scan area", // supported on Android only
+                "formats": "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+                "orientation": "landscape" // Android only (portrait|landscape), default unset so it rotates with the device
+            };
+
+            cordova.plugins.barcodeScanner.scan(funScanSuccess, funScanFail, scanOption);
+        }
+
+        function funScanSuccess(result)
+        {
+            alert("We got a barcode\n" +
+                    "Result: " + result.text + "\n" +
+                    "Format: " + result.format + "\n" +
+                    "Cancelled: " + result.cancelled);
+        }
+
+        function funScanFail(error)
+        {
+            alert("Scanning failed: " + error);
+        }
+    </script>
+</body>
+</html>
