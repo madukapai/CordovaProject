@@ -99,5 +99,13 @@
         },
         "is_top_level": false,
         "variables": {}
+    },
+    "cordova-plugin-ms-adal": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-ms-adal@0.8.1"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

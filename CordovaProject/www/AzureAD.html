@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=big5" />
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src * ">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>Azure AD</title>
+</head>
+<body>
+    <!-- Cordova 參考，建置後會加入您的應用程式。 -->
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+    <script src="scripts/jquery-1.12.1.js"></script>
+
+    <div>
+        <p><button id="btnEntLogin" onclick="javascript: funEntLogin(funLoginSuccess, funLoginFail);">Enterprise AAD Login</button></p>
+        <p><button id="btnLogout" onclick="javascript: funLogout();">Logout</button></p>
+    </div>
+    <div>
+        userInfo.userId:<span id="spanObjectId"></span><br />
+        userInfo.displayableId:<span id="spandisplayableId"></span><br />
+        userInfo.uniqueId:<span id="spanuniqueId"></span><br />
+        expiresOn:<span id="spanexpiresOn"></span><br />
+        statusCode:<span id="spanstatusCode"></span><br />
+        accessToken:<span id="spanToken"></span><br />
+    </div>
+
+    <script language="javascript">
+        var authority = "https://login.windows.net/common";
+        var resourceUri = "https://graph.windows.net";
+        var clientId = "[在這裡填上Client Id]";
+        var redirectUri = "[在這裡填上Redirect Uri]";
+        var graphApiVersion = "2013-11-08";
+
+        // Shows user authentication dialog if required
+        function funEntLogin(authCompletedCallback, errorCallback) {
+            var authContext = new Microsoft.ADAL.AuthenticationContext(authority);
+            authContext.tokenCache.readItems().then(function (items) {
+                if (items.length > 0) {
+                    authority = items[0].authority;
+                    authContext = new Microsoft.ADAL.AuthenticationContext(authority);
+                }
+
+                // 先於背景方式取得Token，若是失敗則開啟UI畫面
+                authContext.acquireTokenSilentAsync(resourceUri, clientId)
+                .then(authCompletedCallback, function () {
+                    // 透過對話的UI介面進行登入與取得Token
+                    authContext.acquireTokenAsync(resourceUri, clientId, redirectUri)
+                    .then(authCompletedCallback, errorCallback);
+                });
+            });
+        };
+
+        function funLoginSuccess(authResponse) {
+            // 變更畫面上的資訊
+            document.getElementById("spanObjectId").innerText = authResponse.userInfo.userId;
+            document.getElementById("spandisplayableId").innerText = authResponse.userInfo.displayableId;
+            document.getElementById("spanuniqueId").innerText = authResponse.userInfo.uniqueId;
+
+            document.getElementById("spanexpiresOn").innerText = authResponse.expiresOn;
+            document.getElementById("spanstatusCode").innerText = authResponse.statusCode;
+            document.getElementById("spanToken").innerText = authResponse.accessToken;
+
+            // 呼叫REST API，從Graph API上取得AAD中登入帳號完整的資訊
+            var strUrl = "https://graph.windows.net/me?api-version=1.6";
+            funCallAPI(strUrl, authResponse.accessToken);
+
+            console.log("Token acquired: " + authResponse.accessToken);
+            console.log("Token will expire on: " + authResponse.expiresOn);
+            console.log("object: " + JSON.stringify(authResponse));
+        }
+
+        function funLoginFail(err) {
+            alert("Failed to authenticate: " + err);
+            console.log("Failed to authenticate: " + err);
+        }
+
+        function funCallAPI(strUrl, strToken) {
+            $.ajax({
+                url: strUrl,
+                type: 'GET',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "BEARER " + strToken);
+                },
+                success: function (data) {
+                    // data的內容就是完整的Azure AD帳號資訊
+                    console.log(data);
+                },
+                error: function (data, errorThrown) {
+                    console.log(data);
+                    console.log(errorThrown);
+                    alert(3);
+                }
+            });
+        }
+
+        function funLogout() {
+            var authContext = new Microsoft.ADAL.AuthenticationContext("https://login.windows.net/common");
+            authContext.tokenCache.clear();
+        }
+    </script>
+</body>
+</html>
