@@ -127,4 +127,5 @@
   <plugin name="cordova-plugin-compat" version="1.0.0" />
   <plugin name="cordova-plugin-ms-adal" version="0.8.1" />
   <plugin name="cordova-plugin-geolocation" version="2.4.0" />
+  <plugin name="cordova-plugin-globalization" version="1.0.4" />
 </widget>

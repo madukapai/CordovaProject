@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+
+    <!--
+        視需要在下方的中繼標籤中自訂內容安全性原則。將 'unsafe-inline' 加入 default-src 以啟用內嵌 JavaScript。
+        如需詳細資料，請參閱 http://go.microsoft.com/fwlink/?LinkID=617521
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *">
+    <title>CordovaProject</title>
+
+    <!-- CordovaProject 參考 -->
+    <link href="css/index.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Cordova 參考，建置後會加入您的應用程式。 -->
+    <script src="cordova.js"></script>
+    <script src="scripts/platformOverrides.js"></script>
+    <script src="scripts/jquery-1.12.1.js"></script>
+    <script src="scripts/language.js"></script>
+
+    <div>
+        目前裝置使用的語系為:<span id="spanLang"></span>
+    </div>
+    <div>
+        <p>
+            <select id="ddlChangeLanguage" onchange="funChangeLang(this.value);">
+                <option>zh-TW</option>
+                <option>en-US</option>
+            </select>
+        </p>
+        <p>多語系顯示文字1:<span id="spanWord1" lkey="Word1"></span></p>
+        <p>多語系顯示文字1:<span id="spanWord1" lkey="Word2"></span></p>
+    </div>
+
+    <script language="javascript">
+        var strLanguage = "";
+        document.addEventListener('deviceready', onDeviceReady.bind(this), false);
+
+        function onDeviceReady() {
+            checkLanguage();
+        };
+
+
+        function checkLanguage() {
+            navigator.globalization.getPreferredLanguage(
+                function (language) {
+                    document.getElementById("spanLang").innerHTML = language.value;
+                    document.getElementById("ddlChangeLanguage").value = language.value;
+                    languageInit(language.value);
+                },
+                function () {
+                    alert('取得語系發生錯誤');
+                }
+            );
+        }
+
+        function funChangeLang(strLanguage)
+        {
+            languageInit(strLanguage);
+        }
+    </script>
+</body>
+</html>
